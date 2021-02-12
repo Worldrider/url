@@ -1,6 +1,6 @@
 /**
  * --------------------------------------------------------------------------
- * Url (v1.0.0): url.js
+ * Url (v1.0.1): url.js
  * Licensed under MIT (https://github.com/Worldrider/url/blob/master/LICENSE.txt)
  * --------------------------------------------------------------------------
  */
@@ -94,6 +94,9 @@ class Url {
         return obj;
     }
     static setParams (url, params) {
+        function getSeparator (url) {
+            return url.indexOf('?') !== -1 ? "&" : "?";
+        }
         function removeParam (url, key) {
             // var searchParams = new URLSearchParams(url);
             // searchParams.delete(key)
@@ -121,6 +124,7 @@ class Url {
             return bare + hash
         }
         url = i === -1 ? url : url.substr(0, i);
+
         for (var key in params) {
             if (params.hasOwnProperty(key)) {
                 var value = params[key]
@@ -129,7 +133,6 @@ class Url {
                 }
 
                 var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-                var separator = url.indexOf('?') !== -1 ? "&" : "?";
 
                 if (value == undefined || value == null) {
                     url = removeParam(url, key)
@@ -137,7 +140,7 @@ class Url {
                     if (Array.isArray(value)) {
                         url = removeParam(url, key)
                         for (var i = 0; i < value.length; i++) {
-                            url += separator + key + "=" + value[i];
+                            url += getSeparator(url) + key + "=" + value[i];
                         }
                     } else {
                         url = url.replace(re, '$1' + key + "=" + value + '$2');
@@ -145,10 +148,10 @@ class Url {
                 } else {
                     if (Array.isArray(value)) {
                         for (var i = 0; i < value.length; i++) {
-                            url += separator + key + "=" + value[i];
+                            url += getSeparator(url) + key + "=" + value[i];
                         }
                     } else {
-                        url = url + separator + key + "=" + value;
+                        url = url + getSeparator(url) + key + "=" + value;
                     }
                 }
             }
